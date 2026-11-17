@@ -23,8 +23,8 @@ Asignatura: Construcción de Software · Práctica 4 (Unidad 4) · Periodo agost
 ## Instalación
 
 ```powershell
-git clone <url-del-repositorio>
-cd <carpeta-del-repositorio>
+git clone https://github.com/bicazav-bot/visionface-pruebas.git
+cd visionface-pruebas
 python -m venv .venv
 .\.venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
