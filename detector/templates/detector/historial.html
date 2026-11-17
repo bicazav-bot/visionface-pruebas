@@ -1,0 +1,10 @@
+{% extends "detector/base.html" %}
+{% block titulo %}Historial{% endblock %}
+{% block contenido %}
+<h1>Historial de análisis</h1>
+{% if detecciones %}
+  {% include "detector/_tabla.html" %}
+{% else %}
+  <p class="vacio" id="sin-registros">No hay registros todavía.</p>
+{% endif %}
+{% endblock %}

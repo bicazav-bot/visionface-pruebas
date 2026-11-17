@@ -1,0 +1,98 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.2.0, pluggy-1.7.0 -- C:\proyecto\visionface\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+django: version: 6.1.3, settings: config.settings (from ini)
+rootdir: C:\proyecto\visionface
+configfile: pytest.ini
+testpaths: tests
+plugins: cov-7.1.0, django-4.14.0
+collecting ... collected 68 items
+
+tests/integration/test_rutas_y_flujo.py::test_rutas_principales_responden_200[detector:inicio-detector/inicio.html] PASSED [  1%]
+tests/integration/test_rutas_y_flujo.py::test_rutas_principales_responden_200[detector:imagen-detector/imagen.html] PASSED [  2%]
+tests/integration/test_rutas_y_flujo.py::test_rutas_principales_responden_200[detector:video-detector/video.html] PASSED [  4%]
+tests/integration/test_rutas_y_flujo.py::test_rutas_principales_responden_200[detector:historial-detector/historial.html] PASSED [  5%]
+tests/integration/test_rutas_y_flujo.py::test_ruta_inexistente_404 PASSED [  7%]
+tests/integration/test_rutas_y_flujo.py::test_archivos_estaticos_enlazados PASSED [  8%]
+tests/integration/test_rutas_y_flujo.py::test_flujo_imagen_con_rostro PASSED [ 10%]
+tests/integration/test_rutas_y_flujo.py::test_flujo_imagen_sin_rostro PASSED [ 11%]
+tests/integration/test_rutas_y_flujo.py::test_imagen_corrupta_muestra_error_y_no_guarda PASSED [ 13%]
+tests/integration/test_rutas_y_flujo.py::test_extension_invalida_no_guarda PASSED [ 14%]
+tests/integration/test_rutas_y_flujo.py::test_flujo_video PASSED         [ 16%]
+tests/integration/test_rutas_y_flujo.py::test_video_invalido PASSED      [ 17%]
+tests/integration/test_rutas_y_flujo.py::test_historial_e_inicio_reflejan_detecciones PASSED [ 19%]
+tests/integration/test_rutas_y_flujo.py::TestApi::test_api_devuelve_json PASSED [ 20%]
+tests/integration/test_rutas_y_flujo.py::TestApi::test_api_rechaza_get PASSED [ 22%]
+tests/integration/test_rutas_y_flujo.py::TestApi::test_api_sin_archivo_400 PASSED [ 23%]
+tests/integration/test_rutas_y_flujo.py::TestApi::test_api_imagen_corrupta_400 PASSED [ 25%]
+tests/unit/test_forms_modelos.py::test_modelo_str_y_orden PASSED         [ 26%]
+tests/functional/test_casos_de_uso.py::test_cu01_pagina_de_inicio PASSED [ 27%]
+tests/functional/test_casos_de_uso.py::test_cu02_navegacion_menu PASSED  [ 29%]
+tests/functional/test_casos_de_uso.py::test_cu03_deteccion_en_imagen PASSED [ 30%]
+tests/functional/test_casos_de_uso.py::test_cu04_imagen_sin_rostros PASSED [ 32%]
+tests/functional/test_casos_de_uso.py::test_cu05_deteccion_en_video PASSED [ 33%]
+tests/functional/test_casos_de_uso.py::test_cu06_archivo_no_permitido PASSED [ 35%]
+tests/functional/test_casos_de_uso.py::test_cu07_historial_e_inicio PASSED [ 36%]
+tests/unit/test_forms_modelos.py::test_imagen_form_acepta_extensiones_validas[foto.jpg] PASSED [ 38%]
+tests/unit/test_forms_modelos.py::test_imagen_form_acepta_extensiones_validas[FOTO.JPEG] PASSED [ 39%]
+tests/unit/test_forms_modelos.py::test_imagen_form_acepta_extensiones_validas[a.png] PASSED [ 41%]
+tests/unit/test_forms_modelos.py::test_imagen_form_acepta_extensiones_validas[b.webp] PASSED [ 42%]
+tests/unit/test_forms_modelos.py::test_imagen_form_acepta_extensiones_validas[c.bmp] PASSED [ 44%]
+tests/unit/test_forms_modelos.py::test_imagen_form_rechaza_extensiones[doc.pdf] PASSED [ 45%]
+tests/unit/test_forms_modelos.py::test_imagen_form_rechaza_extensiones[video.mp4] PASSED [ 47%]
+tests/unit/test_forms_modelos.py::test_imagen_form_rechaza_extensiones[sin_extension] PASSED [ 48%]
+tests/unit/test_forms_modelos.py::test_imagen_form_requiere_archivo PASSED [ 50%]
+tests/unit/test_forms_modelos.py::test_video_form_acepta_extensiones_validas[v.mp4] PASSED [ 51%]
+tests/unit/test_forms_modelos.py::test_video_form_acepta_extensiones_validas[v.avi] PASSED [ 52%]
+tests/unit/test_forms_modelos.py::test_video_form_acepta_extensiones_validas[v.mov] PASSED [ 54%]
+tests/unit/test_forms_modelos.py::test_video_form_acepta_extensiones_validas[v.mkv] PASSED [ 55%]
+tests/unit/test_forms_modelos.py::test_video_form_acepta_extensiones_validas[v.webm] PASSED [ 57%]
+tests/unit/test_forms_modelos.py::test_video_form_rechaza_imagen PASSED  [ 58%]
+tests/unit/test_forms_modelos.py::test_rechaza_archivo_demasiado_grande PASSED [ 60%]
+tests/unit/test_vision.py::TestCargarClasificador::test_carga_clasificador_haar PASSED [ 61%]
+tests/unit/test_vision.py::TestCargarClasificador::test_clasificador_se_cachea PASSED [ 63%]
+tests/unit/test_vision.py::TestDecodificarImagen::test_decodifica_jpg_valido PASSED [ 64%]
+tests/unit/test_vision.py::TestDecodificarImagen::test_decodifica_png_generado PASSED [ 66%]
+tests/unit/test_vision.py::TestDecodificarImagen::test_bytes_vacios_lanza_error PASSED [ 67%]
+tests/unit/test_vision.py::TestDecodificarImagen::test_bytes_corruptos_lanza_error PASSED [ 69%]
+tests/unit/test_vision.py::TestDetectarRostros::test_detecta_un_rostro PASSED [ 70%]
+tests/unit/test_vision.py::TestDetectarRostros::test_rostro_dentro_de_los_limites PASSED [ 72%]
+tests/unit/test_vision.py::TestDetectarRostros::test_imagen_sin_rostros PASSED [ 73%]
+tests/unit/test_vision.py::TestDetectarRostros::test_imagen_negra_sin_rostros PASSED [ 75%]
+tests/unit/test_vision.py::TestDetectarRostros::test_acepta_escala_de_grises PASSED [ 76%]
+tests/unit/test_vision.py::TestDetectarRostros::test_tamano_minimo_filtra_rostros_pequenos PASSED [ 77%]
+tests/unit/test_vision.py::TestDetectarRostros::test_imagen_invalida_lanza_error[None] PASSED [ 79%]
+tests/unit/test_vision.py::TestDetectarRostros::test_imagen_invalida_lanza_error[valor1] PASSED [ 80%]
+tests/unit/test_vision.py::TestDetectarRostros::test_escala_invalida_lanza_error PASSED [ 82%]
+tests/unit/test_vision.py::TestDibujarDetecciones::test_no_modifica_la_original PASSED [ 83%]
+tests/unit/test_vision.py::TestDibujarDetecciones::test_dibuja_recuadro_verde PASSED [ 85%]
+tests/unit/test_vision.py::TestDibujarDetecciones::test_sin_rostros_devuelve_copia_identica PASSED [ 86%]
+tests/unit/test_vision.py::TestImagenABase64::test_genera_data_uri_jpeg PASSED [ 88%]
+tests/unit/test_vision.py::TestImagenABase64::test_genera_data_uri_png PASSED [ 89%]
+tests/unit/test_vision.py::TestProcesarVideo::test_video_con_rostros PASSED [ 91%]
+tests/unit/test_vision.py::TestProcesarVideo::test_video_sin_rostros PASSED [ 92%]
+tests/unit/test_vision.py::TestProcesarVideo::test_respeta_limite_de_cuadros PASSED [ 94%]
+tests/unit/test_vision.py::TestProcesarVideo::test_archivo_inexistente PASSED [ 95%]
+tests/unit/test_vision.py::TestProcesarVideo::test_archivo_no_es_video PASSED [ 97%]
+tests/unit/test_vision.py::TestProcesarVideo::test_parametros_invalidos[0-10] PASSED [ 98%]
+tests/unit/test_vision.py::TestProcesarVideo::test_parametros_invalidos[1-0] PASSED [100%]
+
+- generated xml file: C:\proyecto\visionface\evidencias\resultados_junit.xml -
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.10-final-0 _______________
+
+Name                                  Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------
+detector\__init__.py                      0      0   100%
+detector\admin.py                         7      0   100%
+detector\apps.py                          3      0   100%
+detector\forms.py                        20      0   100%
+detector\migrations\0001_initial.py       5      0   100%
+detector\migrations\__init__.py           0      0   100%
+detector\models.py                       17      0   100%
+detector\urls.py                          4      0   100%
+detector\views.py                        69      0   100%
+detector\vision.py                       91      4    96%   41, 51, 95, 131
+-------------------------------------------------------------------
+TOTAL                                   216      4    98%
+============================= 68 passed in 8.46s ==============================

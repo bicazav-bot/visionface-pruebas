@@ -1,0 +1,24 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Detector de Rostros{% endblock %} · VisionFace</title>
+  <link rel="stylesheet" href="{% static 'detector/estilos.css' %}">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="{% url 'detector:inicio' %}" id="logo">VisionFace</a>
+    <nav>
+      <a href="{% url 'detector:inicio' %}" id="nav-inicio">Inicio</a>
+      <a href="{% url 'detector:imagen' %}" id="nav-imagen">Imagen</a>
+      <a href="{% url 'detector:video' %}" id="nav-video">Video</a>
+      <a href="{% url 'detector:historial' %}" id="nav-historial">Historial</a>
+    </nav>
+  </header>
+  <main class="contenedor">
+    {% block contenido %}{% endblock %}
+  </main>
+  <footer class="pie">Construcción de Software · UNEMI · Django + OpenCV</footer>
+</body>
+</html>

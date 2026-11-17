@@ -1,0 +1,24 @@
+{% extends "detector/base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<section class="hero">
+  <h1>Detección de rostros con OpenCV</h1>
+  <p>Sube una imagen o un video y el sistema localizará los rostros usando un clasificador Haar en cascada.</p>
+  <div class="acciones">
+    <a class="boton" href="{% url 'detector:imagen' %}" id="btn-imagen">Analizar imagen</a>
+    <a class="boton secundario" href="{% url 'detector:video' %}" id="btn-video">Analizar video</a>
+  </div>
+</section>
+
+<section class="tarjetas">
+  <div class="tarjeta"><span class="dato" id="total-analisis">{{ resumen.total }}</span><span>análisis realizados</span></div>
+  <div class="tarjeta"><span class="dato" id="total-rostros">{{ resumen.rostros|default:0 }}</span><span>rostros detectados</span></div>
+</section>
+
+<h2>Últimos análisis</h2>
+{% if recientes %}
+  {% include "detector/_tabla.html" with detecciones=recientes %}
+{% else %}
+  <p class="vacio" id="sin-registros">Aún no hay análisis. ¡Prueba con una imagen!</p>
+{% endif %}
+{% endblock %}
