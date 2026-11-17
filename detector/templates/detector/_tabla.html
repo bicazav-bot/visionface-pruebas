@@ -1,15 +1,15 @@
+{% if detecciones %}
 <table class="tabla" id="tabla-detecciones">
-  <thead><tr><th>Fecha</th><th>Tipo</th><th>Archivo</th><th>Rostros</th><th>Cuadros</th><th>Tiempo</th></tr></thead>
-  <tbody>
+  <tr><th>Fecha</th><th>Tipo</th><th>Archivo</th><th>Rostros</th></tr>
   {% for d in detecciones %}
-    <tr>
-      <td>{{ d.fecha|date:"d/m/Y H:i" }}</td>
-      <td><span class="etiqueta {{ d.tipo }}">{{ d.get_tipo_display }}</span></td>
-      <td>{{ d.nombre_archivo }}</td>
-      <td>{{ d.rostros }}</td>
-      <td>{{ d.cuadros_analizados }}</td>
-      <td>{{ d.duracion_ms }} ms</td>
-    </tr>
+  <tr>
+    <td>{{ d.fecha|date:"d/m/Y H:i" }}</td>
+    <td>{{ d.tipo }}</td>
+    <td>{{ d.archivo }}</td>
+    <td>{{ d.rostros }}</td>
+  </tr>
   {% endfor %}
-  </tbody>
 </table>
+{% else %}
+<p class="vacio" id="sin-registros">Aún no hay análisis.</p>
+{% endif %}

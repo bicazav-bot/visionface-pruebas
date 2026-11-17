@@ -1,118 +1,88 @@
 import os
 import tempfile
-import time
-from pathlib import Path
 
-from django.conf import settings
-from django.db.models import Count, Sum
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 from . import vision
-from .forms import ImagenForm, VideoForm
 from .models import Deteccion
+
+IMAGENES = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
+VIDEOS = (".mp4", ".avi", ".mov", ".mkv", ".webm")
 
 
 def inicio(request):
-    resumen = Deteccion.objects.aggregate(total=Count("id"), rostros=Sum("rostros"))
-    return render(request, "detector/inicio.html", {
-        "resumen": resumen,
-        "recientes": Deteccion.objects.all()[:5],
-    })
+    detecciones = Deteccion.objects.all()
+    contexto = {
+        "total": detecciones.count(),
+        "total_rostros": sum(d.rostros for d in detecciones),
+        "recientes": detecciones[:5],
+    }
+    return render(request, "detector/inicio.html", contexto)
 
 
-def _analizar_imagen(archivo):
-    inicio_t = time.perf_counter()
-    imagen = vision.decodificar_imagen(archivo.read())
-    rostros = vision.detectar_rostros(imagen)
-    anotada = vision.dibujar_detecciones(imagen, rostros)
-    ms = int((time.perf_counter() - inicio_t) * 1000)
-    registro = Deteccion.objects.create(
-        tipo=Deteccion.TIPO_IMAGEN, nombre_archivo=archivo.name,
-        rostros=len(rostros), duracion_ms=ms,
-    )
-    return imagen, rostros, anotada, registro
-
-
-def detectar_imagen(request):
-    contexto = {"form": ImagenForm()}
+def imagen(request):
+    contexto = {}
     if request.method == "POST":
-        form = ImagenForm(request.POST, request.FILES)
-        contexto["form"] = form
-        if form.is_valid():
+        archivo = request.FILES.get("archivo")
+        if archivo is None or not archivo.name.lower().endswith(IMAGENES):
+            contexto["error"] = "Formato no permitido. Use JPG, PNG, BMP o WEBP."
+        else:
             try:
-                imagen, rostros, anotada, registro = _analizar_imagen(form.cleaned_data["archivo"])
-                contexto.update({
-                    "registro": registro,
-                    "rostros": rostros,
-                    "original_b64": vision.imagen_a_base64(imagen),
-                    "anotada_b64": vision.imagen_a_base64(anotada),
-                    "dimensiones": f"{imagen.shape[1]} x {imagen.shape[0]} px",
-                })
-            except vision.ImagenInvalidaError as exc:
-                form.add_error("archivo", str(exc))
+                foto = vision.leer_imagen(archivo.read())
+                rostros = vision.detectar_rostros(foto)
+                Deteccion.objects.create(tipo="Imagen", archivo=archivo.name, rostros=len(rostros))
+                contexto["nombre"] = archivo.name
+                contexto["rostros"] = rostros
+                contexto["original"] = vision.imagen_a_texto(foto)
+                contexto["marcada"] = vision.imagen_a_texto(vision.dibujar_rostros(foto, rostros))
+            except ValueError as error:
+                contexto["error"] = str(error)
     return render(request, "detector/imagen.html", contexto)
 
 
-def detectar_video(request):
-    contexto = {"form": VideoForm()}
+def video(request):
+    contexto = {}
     if request.method == "POST":
-        form = VideoForm(request.POST, request.FILES)
-        contexto["form"] = form
-        if form.is_valid():
-            archivo = form.cleaned_data["archivo"]
-            sufijo = Path(archivo.name).suffix.lower()
-            fd, ruta = tempfile.mkstemp(suffix=sufijo)
+        archivo = request.FILES.get("archivo")
+        if archivo is None or not archivo.name.lower().endswith(VIDEOS):
+            contexto["error"] = "Formato no permitido. Use MP4, AVI, MOV, MKV o WEBM."
+        else:
+            # OpenCV necesita el video en un archivo, así que se guarda uno temporal.
+            temporal = tempfile.NamedTemporaryFile(suffix=os.path.splitext(archivo.name)[1], delete=False)
+            for parte in archivo.chunks():
+                temporal.write(parte)
+            temporal.close()
             try:
-                with os.fdopen(fd, "wb") as destino:
-                    for trozo in archivo.chunks():
-                        destino.write(trozo)
-                inicio_t = time.perf_counter()
-                resultado = vision.procesar_video(
-                    ruta, max_cuadros=settings.VIDEO_MAX_FRAMES, paso=settings.VIDEO_FRAME_STEP,
-                )
-                ms = int((time.perf_counter() - inicio_t) * 1000)
-                registro = Deteccion.objects.create(
-                    tipo=Deteccion.TIPO_VIDEO, nombre_archivo=archivo.name,
-                    rostros=resultado.max_rostros,
-                    cuadros_analizados=resultado.cuadros_analizados, duracion_ms=ms,
-                )
-                contexto.update({
-                    "registro": registro,
-                    "resultado": resultado,
-                    "mejor_b64": vision.imagen_a_base64(resultado.mejor_cuadro)
-                    if resultado.mejor_cuadro is not None else None,
-                })
-            except vision.VideoInvalidoError as exc:
-                form.add_error("archivo", str(exc))
+                resultado = vision.analizar_video(temporal.name)
+                Deteccion.objects.create(tipo="Video", archivo=archivo.name, rostros=resultado["max_rostros"])
+                contexto["nombre"] = archivo.name
+                contexto["resultado"] = resultado
+                contexto["mejor_cuadro"] = vision.imagen_a_texto(resultado["mejor_cuadro"])
+            except ValueError as error:
+                contexto["error"] = str(error)
             finally:
-                os.remove(ruta)
+                os.remove(temporal.name)
     return render(request, "detector/video.html", contexto)
 
 
 def historial(request):
-    return render(request, "detector/historial.html", {
-        "detecciones": Deteccion.objects.all()[:100],
-    })
+    return render(request, "detector/historial.html", {"detecciones": Deteccion.objects.all()})
 
 
-@require_POST
+@csrf_exempt   # la API se usa desde fuera del navegador (curl, Postman)
 def api_detectar(request):
-    """Endpoint JSON: recibe `archivo` (imagen) y devuelve los rostros detectados."""
-    form = ImagenForm(request.POST, request.FILES)
-    if not form.is_valid():
-        return JsonResponse({"ok": False, "errores": form.errors.get_json_data()}, status=400)
+    """Recibe una imagen por POST y responde con los rostros en formato JSON."""
+    if request.method != "POST":
+        return JsonResponse({"error": "Use el método POST."}, status=405)
+    archivo = request.FILES.get("archivo")
+    if archivo is None:
+        return JsonResponse({"error": "Falta el campo 'archivo'."}, status=400)
     try:
-        imagen, rostros, _, registro = _analizar_imagen(form.cleaned_data["archivo"])
-    except vision.ImagenInvalidaError as exc:
-        return JsonResponse({"ok": False, "errores": {"archivo": [{"message": str(exc)}]}}, status=400)
-    return JsonResponse({
-        "ok": True,
-        "id": registro.id,
-        "rostros": len(rostros),
-        "cajas": [dict(zip("xywh", r)) for r in rostros],
-        "ancho": int(imagen.shape[1]),
-        "alto": int(imagen.shape[0]),
-        "duracion_ms": registro.duracion_ms,
-    })
+        foto = vision.leer_imagen(archivo.read())
+    except ValueError as error:
+        return JsonResponse({"error": str(error)}, status=400)
+    rostros = vision.detectar_rostros(foto)
+    Deteccion.objects.create(tipo="Imagen", archivo=archivo.name, rostros=len(rostros))
+    return JsonResponse({"rostros": len(rostros), "posiciones": rostros})

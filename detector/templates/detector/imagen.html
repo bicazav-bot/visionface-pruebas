@@ -2,29 +2,31 @@
 {% block titulo %}Analizar imagen{% endblock %}
 {% block contenido %}
 <h1>Analizar imagen</h1>
-<form method="post" enctype="multipart/form-data" class="formulario" id="form-imagen">
+<form method="post" enctype="multipart/form-data" class="formulario">
   {% csrf_token %}
   <label for="id_archivo">Selecciona una imagen (JPG, PNG, BMP, WEBP)</label>
   <input type="file" name="archivo" id="id_archivo" accept="image/*" required>
-  {% if form.archivo.errors %}<div class="error" id="error">{{ form.archivo.errors|join:" " }}</div>{% endif %}
   <button type="submit" class="boton" id="btn-analizar">Detectar rostros</button>
 </form>
 
-{% if registro %}
-<section class="resultado" id="resultado">
-  <h2>Resultado: <span id="num-rostros">{{ rostros|length }}</span> rostro{{ rostros|length|pluralize }} detectado{{ rostros|length|pluralize }}</h2>
-  <p class="meta">Archivo: <b>{{ registro.nombre_archivo }}</b> · {{ dimensiones }} · procesado en {{ registro.duracion_ms }} ms</p>
+{% if error %}<p class="error" id="error">{{ error }}</p>{% endif %}
+
+{% if nombre %}
+<section id="resultado">
+  <h2>Resultado: <span id="num-rostros">{{ rostros|length }}</span> rostro(s) en {{ nombre }}</h2>
   <div class="comparacion">
-    <figure><img src="{{ original_b64 }}" alt="Imagen original"><figcaption>Original</figcaption></figure>
-    <figure><img src="{{ anotada_b64 }}" alt="Imagen con rostros marcados" id="img-anotada"><figcaption>Rostros detectados</figcaption></figure>
+    <figure><img src="{{ original }}" alt="Original"><figcaption>Original</figcaption></figure>
+    <figure><img src="{{ marcada }}" alt="Rostros marcados" id="img-marcada"><figcaption>Rostros detectados</figcaption></figure>
   </div>
   {% if rostros %}
-  <table class="tabla" id="tabla-cajas">
-    <thead><tr><th>#</th><th>X</th><th>Y</th><th>Ancho</th><th>Alto</th></tr></thead>
-    <tbody>{% for r in rostros %}<tr><td>{{ forloop.counter }}</td>{% for v in r %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+  <table class="tabla" id="tabla-rostros">
+    <tr><th>#</th><th>X</th><th>Y</th><th>Ancho</th><th>Alto</th></tr>
+    {% for r in rostros %}
+    <tr><td>{{ forloop.counter }}</td><td>{{ r.0 }}</td><td>{{ r.1 }}</td><td>{{ r.2 }}</td><td>{{ r.3 }}</td></tr>
+    {% endfor %}
   </table>
   {% else %}
-  <p class="vacio" id="sin-rostros">No se encontraron rostros frontales en la imagen.</p>
+  <p class="vacio" id="sin-rostros">No se encontraron rostros en la imagen.</p>
   {% endif %}
 </section>
 {% endif %}

@@ -6,3 +6,5 @@ media/
 .pytest_cache/
 .coverage
 htmlcov/
+.claude/
+demo-github/

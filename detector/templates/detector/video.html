@@ -2,31 +2,24 @@
 {% block titulo %}Analizar video{% endblock %}
 {% block contenido %}
 <h1>Analizar video</h1>
-<form method="post" enctype="multipart/form-data" class="formulario" id="form-video">
+<form method="post" enctype="multipart/form-data" class="formulario">
   {% csrf_token %}
   <label for="id_archivo">Selecciona un video (MP4, AVI, MOV, MKV, WEBM)</label>
   <input type="file" name="archivo" id="id_archivo" accept="video/*" required>
-  {% if form.archivo.errors %}<div class="error" id="error">{{ form.archivo.errors|join:" " }}</div>{% endif %}
   <button type="submit" class="boton" id="btn-analizar">Procesar video</button>
 </form>
 
-{% if registro %}
-<section class="resultado" id="resultado">
-  <h2>Resumen del video</h2>
+{% if error %}<p class="error" id="error">{{ error }}</p>{% endif %}
+
+{% if nombre %}
+<section id="resultado">
+  <h2>Resultado de {{ nombre }}</h2>
   <div class="tarjetas">
-    <div class="tarjeta"><span class="dato" id="cuadros-analizados">{{ resultado.cuadros_analizados }}</span><span>cuadros analizados de {{ resultado.cuadros_totales }}</span></div>
-    <div class="tarjeta"><span class="dato" id="cuadros-con-rostros">{{ resultado.cuadros_con_rostros }}</span><span>cuadros con rostros ({{ resultado.porcentaje_con_rostros }} %)</span></div>
-    <div class="tarjeta"><span class="dato" id="max-rostros">{{ resultado.max_rostros }}</span><span>máximo de rostros en un cuadro</span></div>
+    <div class="tarjeta"><span class="dato" id="analizados">{{ resultado.analizados }}</span>cuadros analizados de {{ resultado.cuadros }}</div>
+    <div class="tarjeta"><span class="dato" id="con-rostros">{{ resultado.con_rostros }}</span>cuadros con rostros</div>
+    <div class="tarjeta"><span class="dato" id="max-rostros">{{ resultado.max_rostros }}</span>máximo de rostros en un cuadro</div>
   </div>
-  <p class="meta">Archivo: <b>{{ registro.nombre_archivo }}</b> · {{ resultado.fps|floatformat:1 }} FPS · procesado en {{ registro.duracion_ms }} ms</p>
-  {% if mejor_b64 %}
-  <figure class="destacado"><img src="{{ mejor_b64 }}" alt="Cuadro con más rostros" id="img-mejor-cuadro"><figcaption>Cuadro con más rostros detectados</figcaption></figure>
-  {% endif %}
-  <details><summary>Detecciones por cuadro</summary>
-    <table class="tabla" id="tabla-cuadros"><thead><tr><th>Cuadro</th><th>Rostros</th></tr></thead>
-      <tbody>{% for c, n in resultado.detecciones_por_cuadro %}<tr><td>{{ c }}</td><td>{{ n }}</td></tr>{% endfor %}</tbody>
-    </table>
-  </details>
+  <figure class="destacado"><img src="{{ mejor_cuadro }}" alt="Mejor cuadro" id="img-mejor-cuadro"><figcaption>Cuadro con más rostros</figcaption></figure>
 </section>
 {% endif %}
 {% endblock %}
