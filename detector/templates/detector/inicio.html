@@ -13,6 +13,29 @@
   <div class="tarjeta"><span class="dato" id="total-rostros">{{ total_rostros }}</span>rostros detectados</div>
 </section>
 
-<h2>Últimos análisis</h2>
-{% include "detector/_tabla.html" with detecciones=recientes %}
+<div class="encabezado">
+  <h2>Últimos análisis</h2>
+  {% if detecciones %}
+  <form method="post" action="{% url 'borrar' %}" onsubmit="return confirm('¿Borrar todos los análisis?');">
+    {% csrf_token %}
+    <button type="submit" class="boton peligro" id="btn-borrar">Borrar historial</button>
+  </form>
+  {% endif %}
+</div>
+
+{% if detecciones %}
+<table class="tabla" id="tabla-detecciones">
+  <tr><th>Fecha</th><th>Tipo</th><th>Archivo</th><th>Rostros</th></tr>
+  {% for d in detecciones %}
+  <tr>
+    <td>{{ d.fecha|date:"d/m/Y H:i" }}</td>
+    <td>{{ d.tipo }}</td>
+    <td>{{ d.archivo }}</td>
+    <td>{{ d.rostros }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="vacio" id="sin-registros">Aún no hay análisis.</p>
+{% endif %}
 {% endblock %}

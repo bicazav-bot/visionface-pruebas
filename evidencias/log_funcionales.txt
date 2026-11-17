@@ -10,6 +10,6 @@ tests/test_funcionales.py::test_cu1_inicio PASSED                        [ 20%]
 tests/test_funcionales.py::test_cu2_detectar_en_imagen PASSED            [ 40%]
 tests/test_funcionales.py::test_cu3_imagen_sin_rostros PASSED            [ 60%]
 tests/test_funcionales.py::test_cu4_detectar_en_video PASSED             [ 80%]
-tests/test_funcionales.py::test_cu5_historial PASSED                     [100%]
+tests/test_funcionales.py::test_cu5_borrar_historial PASSED              [100%]
 
-============================= 5 passed in 18.11s ==============================
+============================= 5 passed in 18.47s ==============================

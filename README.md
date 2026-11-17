@@ -24,19 +24,19 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Abrir <http://127.0.0.1:8000/>. Páginas: Inicio (`/`), Imagen (`/imagen/`), Video (`/video/`), Historial (`/historial/`) y API (`POST /api/detectar/` con el campo `archivo`).
+Abrir <http://127.0.0.1:8000/>. Páginas: Inicio (`/`, con los últimos análisis y el botón **Borrar historial**), Imagen (`/imagen/`), Video (`/video/`) y API (`POST /api/detectar/` con el campo `archivo`).
 
 ## Pruebas
 
 ```powershell
-pytest                              # todas (25 pruebas)
+pytest                              # todas (27 pruebas)
 pytest tests/test_unitarias.py      # unitarias
 pytest tests/test_integracion.py    # integración
 pytest tests/test_funcionales.py    # funcionales (necesita Microsoft Edge)
 pytest --cov=detector               # con cobertura
 ```
 
-Última ejecución: **25 pruebas aprobadas, 0 fallidas, 94 % de cobertura**. Logs y capturas en [`evidencias/`](evidencias/).
+Última ejecución: **27 pruebas aprobadas, 0 fallidas, 94 % de cobertura**. Logs y capturas en [`evidencias/`](evidencias/).
 
 ## Estructura
 

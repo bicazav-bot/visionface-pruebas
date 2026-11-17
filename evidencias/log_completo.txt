@@ -5,13 +5,13 @@ rootdir: C:\proyecto\visionface
 configfile: pytest.ini
 testpaths: tests
 plugins: cov-7.1.0, django-4.14.0
-collected 25 items
+collected 27 items
 
-tests\test_integracion.py .........                                      [ 36%]
-tests\test_funcionales.py .....                                          [ 56%]
+tests\test_integracion.py ...........                                    [ 40%]
+tests\test_funcionales.py .....                                          [ 59%]
 tests\test_unitarias.py ...........                                      [100%]
 
-- generated xml file: C:\proyecto\visionface\evidencias\resultados_junit.xml -
+----------- generated xml file: C:\proyecto\visionface\evidencias\resultados_junit.xml ------------
 =============================== tests coverage ================================
 ______________ coverage: platform win32, python 3.12.10-final-0 _______________
 
@@ -24,8 +24,8 @@ detector\migrations\0001_initial.py       5      0   100%
 detector\migrations\__init__.py           0      0   100%
 detector\models.py                       10      1    90%   15
 detector\urls.py                          3      0   100%
-detector\views.py                        66      7    89%   40-41, 50, 63-64, 84-85
+detector\views.py                        68      7    90%   40-41, 50, 63-64, 87-88
 detector\vision.py                       48      0   100%
 -------------------------------------------------------------------
-TOTAL                                   138      8    94%
-============================= 25 passed in 19.17s =============================
+TOTAL                                   140      8    94%
+============================= 27 passed in 19.66s =============================

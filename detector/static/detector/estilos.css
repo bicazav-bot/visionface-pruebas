@@ -34,3 +34,5 @@ figcaption { text-align: center; color: #5a6478; padding-top: 6px; }
 .pie { text-align: center; color: #7a8396; padding: 20px; font-size: .9rem; }
 .hero .boton { margin: 0 8px 0 0; }
 h2 { color: var(--azul); }
+.encabezado { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.boton.peligro { background: #b3261e; font-size: .9rem; padding: 8px 14px; }

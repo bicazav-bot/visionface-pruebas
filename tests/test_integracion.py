@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_rutas_principales(client):
-    for ruta in ["/", "/imagen/", "/video/", "/historial/"]:
+    for ruta in ["/", "/imagen/", "/video/"]:
         assert client.get(ruta).status_code == 200
 
 
@@ -44,11 +44,27 @@ def test_subir_video(client, video_con_rostro):
     assert Deteccion.objects.get().tipo == "Video"
 
 
-def test_historial_muestra_los_analisis(client, foto_con_rostro):
+def test_inicio_muestra_los_analisis(client, foto_con_rostro):
     with open(foto_con_rostro, "rb") as archivo:
         client.post("/imagen/", {"archivo": archivo})
-    assert "messi5.jpg" in client.get("/historial/").content.decode()
-    assert client.get("/").context["total"] == 1
+    respuesta = client.get("/")
+    assert "messi5.jpg" in respuesta.content.decode()
+    assert respuesta.context["total"] == 1
+
+
+def test_borrar_historial(client, foto_con_rostro):
+    with open(foto_con_rostro, "rb") as archivo:
+        client.post("/imagen/", {"archivo": archivo})
+    respuesta = client.post("/borrar/")
+    assert respuesta.status_code == 302          # vuelve al inicio
+    assert Deteccion.objects.count() == 0
+
+
+def test_borrar_con_get_no_borra(client, foto_con_rostro):
+    with open(foto_con_rostro, "rb") as archivo:
+        client.post("/imagen/", {"archivo": archivo})
+    client.get("/borrar/")
+    assert Deteccion.objects.count() == 1
 
 
 def test_api_detectar(client, foto_con_rostro):

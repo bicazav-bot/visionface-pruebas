@@ -295,7 +295,7 @@ parrafo("El usuario sube una foto o un video; el sistema busca rostros con el cl
         "está dividido en pocos archivos:")
 tabla(["Archivo", "Qué hace"], [
     ["detector/vision.py", "Funciones de OpenCV: leer la imagen, detectar rostros, dibujar recuadros y analizar videos."],
-    ["detector/views.py", "Páginas de inicio, imagen, video, historial y la API /api/detectar/."],
+    ["detector/views.py", "Páginas de inicio, imagen y video, el botón para borrar el historial y la API /api/detectar/."],
     ["detector/models.py", "Tabla Deteccion: tipo, archivo, número de rostros y fecha."],
     ["detector/templates/", "Páginas HTML que ve el usuario."],
 ], [4.5, 11.5], "Archivos principales")
@@ -342,13 +342,15 @@ titulo("4.2. Pruebas de integración", 2)
 parrafo(f"Archivo tests/test_integracion.py: **{N_INT} pruebas** que envían peticiones a las rutas de "
         "Django y verifican la respuesta y lo guardado en la base de datos.")
 tabla(["Prueba", "Qué comprueba"], [
-    ["test_rutas_principales", "/, /imagen/, /video/ y /historial/ responden 200."],
+    ["test_rutas_principales", "/, /imagen/ y /video/ responden 200."],
     ["test_ruta_inexistente", "Una ruta que no existe responde 404."],
     ["test_subir_imagen_con_rostro", "Subir messi5.jpg muestra 1 rostro y lo guarda en el historial."],
     ["test_subir_imagen_grande_sin_rostros", "Subir causa.jpeg muestra «No se encontraron rostros»."],
     ["test_subir_archivo_no_permitido", "Un .txt muestra «Formato no permitido» y no se guarda."],
     ["test_subir_video", "Subir un video devuelve el resumen y lo guarda como tipo Video."],
-    ["test_historial_muestra_los_analisis", "El análisis aparece en el historial y en el inicio."],
+    ["test_inicio_muestra_los_analisis", "El análisis aparece en «Últimos análisis» del inicio."],
+    ["test_borrar_historial", "El botón Borrar historial elimina todos los análisis y vuelve al inicio."],
+    ["test_borrar_con_get_no_borra", "Abrir /borrar/ sin pulsar el botón no borra nada."],
     ["test_api_detectar", "La API devuelve JSON con 1 rostro."],
     ["test_api_sin_archivo", "La API responde 400 sin archivo y 405 con GET."],
 ], [6, 10], "Pruebas de integración")
@@ -381,7 +383,7 @@ tabla(["Caso", "Pasos", "Resultado esperado", "Estado"], [
     ["CU2 Imagen con rostro", "Subir messi5.jpg", "Muestra 1 rostro marcado", "Aprobada"],
     ["CU3 Imagen sin rostros", "Subir causa.jpeg", "Muestra 0 rostros y el aviso", "Aprobada"],
     ["CU4 Video", "Subir un video de 30 cuadros", "6 cuadros analizados, 1 rostro", "Aprobada"],
-    ["CU5 Historial", "Analizar una imagen y abrir Historial", "Aparece messi5.jpg en la tabla", "Aprobada"],
+    ["CU5 Borrar historial", "Analizar una imagen, pulsar Borrar historial y confirmar", "La tabla queda vacía y el contador en 0", "Aprobada"],
 ], [3.4, 4.3, 5.8, 2.5], "Casos de prueba funcionales")
 figura(CAPT / "consola_funcionales.png", f"Resultado de las pruebas funcionales: {N_FUN} aprobadas.")
 figura(CAPT / "cu2_imagen_con_rostro.png", "CU2: rostro detectado en una imagen (captura de Selenium).", 13)
@@ -441,8 +443,8 @@ parrafo(f"Se ejecutaron **{total} pruebas** ({N_UNIT} unitarias, {N_INT} de inte
 titulo("7. Documentación de usuario")
 titulo("7.1. Inicio", 2)
 parrafo("La página de inicio muestra dos botones (**Analizar imagen** y **Analizar video**), el total "
-        "de análisis, el total de rostros detectados y los últimos análisis. El menú superior lleva a "
-        "Inicio, Imagen, Video e Historial.")
+        "de análisis, el total de rostros detectados y la tabla de últimos análisis. El menú superior lleva a "
+        "Inicio, Imagen y Video.")
 figura(CAPT / "cu1_inicio.png", "Página de inicio.", 13)
 titulo("7.2. Analizar una imagen", 2)
 vineta("Entrar en **Imagen**.")
@@ -458,9 +460,10 @@ vineta("Escoger un video (MP4, AVI, MOV, MKV o WEBM) y pulsar **Procesar video**
 parrafo("**Resultado:** se muestran los cuadros analizados (uno de cada cinco), cuántos tienen rostros, "
         "el máximo de rostros en un mismo cuadro y la imagen del cuadro con más rostros.")
 figura(CAPT / "cu4_video.png", "Resultado del análisis de un video.", 12)
-titulo("7.4. Historial", 2)
-parrafo("En **Historial** aparecen todos los análisis con su fecha, tipo, archivo y número de rostros.")
-figura(CAPT / "cu5_historial.png", "Historial de análisis.", 13)
+titulo("7.4. Últimos análisis y borrar historial", 2)
+parrafo("En la página de inicio, bajo **Últimos análisis**, aparecen todos los análisis con su fecha, tipo, archivo y número de rostros. Para vaciar la lista, pulse **Borrar historial** y confirme con **Aceptar**; los contadores vuelven a 0.")
+figura(CAPT / "cu5a_ultimos_analisis.png", "Últimos análisis con el botón Borrar historial.", 13)
+figura(CAPT / "cu5b_historial_borrado.png", "Inicio después de borrar el historial.", 13)
 titulo("7.5. Mensajes de error", 2)
 tabla(["Mensaje", "Qué hacer"], [
     ["Formato no permitido", "Subir un archivo de imagen o video con una extensión aceptada."],

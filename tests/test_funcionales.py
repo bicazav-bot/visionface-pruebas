@@ -20,7 +20,7 @@ def navegador():
 
 def capturar(navegador, carpeta, nombre):
     alto = navegador.execute_script("return document.body.scrollHeight")
-    navegador.set_window_size(1280, max(alto, 700))
+    navegador.set_window_size(1280, max(alto + 150, 700))
     navegador.save_screenshot(str(carpeta / f"{nombre}.png"))
 
 
@@ -57,8 +57,13 @@ def test_cu4_detectar_en_video(navegador, live_server, video_con_rostro, captura
     capturar(navegador, capturas, "cu4_video")
 
 
-def test_cu5_historial(navegador, live_server, foto_con_rostro, capturas):
+def test_cu5_borrar_historial(navegador, live_server, foto_con_rostro, capturas):
     subir(navegador, live_server.url + "/imagen/", foto_con_rostro)
-    navegador.find_element(By.ID, "nav-historial").click()
+    navegador.find_element(By.ID, "nav-inicio").click()
     assert "messi5.jpg" in navegador.find_element(By.ID, "tabla-detecciones").text
-    capturar(navegador, capturas, "cu5_historial")
+    capturar(navegador, capturas, "cu5a_ultimos_analisis")
+    navegador.find_element(By.ID, "btn-borrar").click()
+    navegador.switch_to.alert.accept()           # confirma "¿Borrar todos los análisis?"
+    assert navegador.find_element(By.ID, "sin-registros").is_displayed()
+    assert navegador.find_element(By.ID, "total-analisis").text == "0"
+    capturar(navegador, capturas, "cu5b_historial_borrado")

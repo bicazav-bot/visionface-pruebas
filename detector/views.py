@@ -2,7 +2,7 @@ import os
 import tempfile
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 from . import vision
@@ -17,7 +17,7 @@ def inicio(request):
     contexto = {
         "total": detecciones.count(),
         "total_rostros": sum(d.rostros for d in detecciones),
-        "recientes": detecciones[:5],
+        "detecciones": detecciones,
     }
     return render(request, "detector/inicio.html", contexto)
 
@@ -67,8 +67,11 @@ def video(request):
     return render(request, "detector/video.html", contexto)
 
 
-def historial(request):
-    return render(request, "detector/historial.html", {"detecciones": Deteccion.objects.all()})
+def borrar(request):
+    """Borra todos los análisis guardados y vuelve al inicio."""
+    if request.method == "POST":
+        Deteccion.objects.all().delete()
+    return redirect("inicio")
 
 
 @csrf_exempt   # la API se usa desde fuera del navegador (curl, Postman)
